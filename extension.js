@@ -30,7 +30,7 @@ function test(cb) {
     var socket = net.connect({ path: "/tmp/node.msgpack.rpc.sock" }, function () {
         session = new Session();
         session.attach(socket, socket);
-        session.request("add", [41,1], function (err, res) {
+        session.request("add", [41, 1], function (err, res) {
             if (err) {
                 console.error(err);
                 return;
@@ -43,3 +43,37 @@ function test(cb) {
 }
 
 exports.test = test;
+
+function fetchRpc(params) {
+    return new Promise(
+        function (resolve, reject) {
+            var socket = net.connect({ path: "/tmp/node.msgpack.rpc.sock" });
+            socket.on('error', function (ex) {
+                reject(ex);
+            });
+            var session = new Session();
+            session.attach(socket, socket);
+            session.request(params.fn, params.data, function (err, res) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                }
+
+                console.log(res);
+                resolve(res);
+            })
+        }
+    );
+}
+
+function testPromise() {
+    return fetchRpc({ fn: "add", data: [41, 1] })
+        .then((res) =>
+            fetchRpc({ fn: "echo", data: ["then with " + res] }))
+        .catch(function (err) {
+            console.log("ERROR from promise-catch: " + err);
+        })
+
+}
+
+exports.testPromise = testPromise;

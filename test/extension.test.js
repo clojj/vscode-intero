@@ -11,4 +11,16 @@ suite("Extension Tests", function () {
             done();
         });
     });
+
+    test("promise", function (done) {
+        myExtension.testPromise()
+            .then(function (res) {
+                assert.equal(res, "***then with 42***");
+                done();
+            })
+            .catch(function (err) {
+                console.log("CATCHED Error: " + err);
+                done();
+            })
+    });
 });
