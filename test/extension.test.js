@@ -5,22 +5,27 @@ var myExtension = require('../extension');
 
 suite("Extension Tests", function () {
 
-    test("msgpack client", function (done) {
-        myExtension.test(function (res) {
-            assert.equal(res, 42);
-            done();
-        });
-    });
-
-    test("promise", function (done) {
-        myExtension.testPromise()
+    // test("promise", function (done) {
+    //     myExtension.activate();
+    //     myExtension.testPromise()
+    //         .then(function (res) {
+    //             assert.equal(res, "***then with 42***");
+    //             done();
+    //         })
+    //         .catch(function (err) {
+    //             console.error("catch " + err);
+    //         })
+    // });
+    
+    test("intero", function (done) {
+    //     myExtension.activate();
+        myExtension.callIntero()
             .then(function (res) {
-                assert.equal(res, "***then with 42***");
+                assert.equal(res, "TODO");
                 done();
             })
             .catch(function (err) {
-                console.log("CATCHED Error: " + err);
-                done();
+                console.error("catch " + err);
             })
     });
 });

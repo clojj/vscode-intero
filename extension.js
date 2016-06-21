@@ -2,6 +2,15 @@ var vscode = require('vscode');
 var net = require('net');
 var Session = require('msgpack5rpc');
 
+// var socket = net.connect({ path: "/tmp/node.msgpack.rpc.sock" });
+var socket = net.connect({ path: "/Users/jwin/stack-projects/ghc8-playground/.intero.sock" });
+socket.on('error', function (ex) {
+    console.error(ex);
+});
+var session = new Session();
+session.attach(socket, socket);
+
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate(context) {
@@ -12,7 +21,6 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
     var disposable = vscode.commands.registerCommand('extension.sayHello', function () {
-
         vscode.window.showInformationMessage('Hello World !!!');
     });
 
@@ -26,54 +34,41 @@ function deactivate() {
 
 exports.deactivate = deactivate;
 
-function test(cb) {
-    var socket = net.connect({ path: "/tmp/node.msgpack.rpc.sock" }, function () {
-        session = new Session();
-        session.attach(socket, socket);
-        session.request("add", [41, 1], function (err, res) {
-            if (err) {
-                console.error(err);
-                return;
-            }
-
-            console.log(res);
-            cb(res);
-        });
-    });
-}
-
-exports.test = test;
-
 function fetchRpc(params) {
     return new Promise(
         function (resolve, reject) {
-            var socket = net.connect({ path: "/tmp/node.msgpack.rpc.sock" });
-            socket.on('error', function (ex) {
-                reject(ex);
-            });
-            var session = new Session();
-            session.attach(socket, socket);
             session.request(params.fn, params.data, function (err, res) {
                 if (err) {
-                    console.error(err);
                     reject(err);
                 }
-
-                console.log(res);
                 resolve(res);
             })
         }
     );
 }
 
-function testPromise() {
-    return fetchRpc({ fn: "add", data: [41, 1] })
-        .then((res) =>
-            fetchRpc({ fn: "echo", data: ["then with " + res] }))
+function callIntero() {
+    return fetchRpc({ fn: "check", data: ["Main"] })
+        .then((res) => {
+            console.log(res);
+            return res;
+        })
         .catch(function (err) {
-            console.log("ERROR from promise-catch: " + err);
+            console.log("catch " + err);
         })
 
 }
 
-exports.testPromise = testPromise;
+exports.callIntero = callIntero;
+
+// function testPromise() {
+//     return fetchRpc({ fn: "add", data: [41, 1] })
+//         .then((res) =>
+//             fetchRpc({ fn: "echo", data: ["then with " + res] }))
+//         .catch(function (err) {
+//             console.log("catch " + err);
+//         })
+
+// }
+
+// exports.testPromise = testPromise;
