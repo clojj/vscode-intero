@@ -3,7 +3,7 @@ var net = require('net');
 var Session = require('msgpack5rpc');
 
 // var socket = net.connect({ path: "/tmp/node.msgpack.rpc.sock" });
-var socket = net.connect({ path: "/Users/jwin/stack-projects/ghc8-playground/.intero.sock" });
+var socket = net.connect({ path: "/Users/jwin/vscode-extensions/vscode-intero/test/fixtures/ghc8-playground/.intero.sock" });
 socket.on('error', function (ex) {
     console.error(ex);
 });

@@ -1,2 +1,3 @@
 node_modules
 haskell
+test/fixtures/ghc8-playground/.stack-work
